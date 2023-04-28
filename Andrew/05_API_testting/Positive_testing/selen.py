@@ -24,7 +24,7 @@ from webdriver_manager.firefox import GeckoDriverManager
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
 from webdriver_manager.opera import OperaDriverManager
 from seleniumwire import webdriver as SWWD
-from security import COOKIES
+from security_Andrew import COOKIES
 
 # from webdriver_manager.safari import SafariDriverManager
 

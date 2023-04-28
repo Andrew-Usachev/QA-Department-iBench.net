@@ -4,7 +4,7 @@ from selen import *
 from time import sleep
 # file
 from security import EMAIL, PASSW
-
+#from security_Andrew import EMAIL, PASSW
 
 # Class of project
 class iBench(Selen):
@@ -152,6 +152,19 @@ class iBench(Selen):
         se.check_links()
         se.Contains({"name": "email", "type": "email"}).out()
 
+    def create_find_contactors(se):
+        se.WD.get(se.url)
+        se.Wait(CLASS, "Navigation_btn__3RPM8").text("Register").out("Message: ")
+        se.title("iBench - real-time developers Hiring").curr_url("https://ibench.net/")
+        se.Contains("Log in").click()
+        se.sleep(2)
+        se.Wait(CLASS, "Login_title__bh47u").text("Log in")
+        se.title("Log in | iBench - real-time developers Hiring").curr_url("https://ibench.net/login")
+        se.Find(NAME, "email").type("qa@gmail.com").sleep(2).attr("value", "qa@gmail.com")
+        se.tag("span").attr('class', 'validation_status_ok')
+        se.Find(NAME, "password").type("123456").sleep(2).attr("value", "123456")
+        se.tag("span").attr('class', 'validation_status_ok')
+
     def main(se):
         pass
 
@@ -161,6 +174,7 @@ if __name__ == "__main__":
     # iBench().head_nav_menu()
     # iBench('Seleniumwire').login()
 
-    iBench().registration()
+    # iBench().registration()
     # iBench().login_cookies()
+    iBench().create_find_contactors()
     print('FINISHED')
