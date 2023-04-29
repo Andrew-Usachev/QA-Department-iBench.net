@@ -1,3 +1,5 @@
+# selen - amazing add-on for selenium framework.
+
 import json
 import hashlib
 import time
@@ -5,14 +7,16 @@ from random import uniform
 from collections import Counter
 import aiohttp
 import asyncio
+from aiohttp.client_exceptions import ClientConnectorError 
 import requests
 from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException, TimeoutException
+from selenium.common.exceptions import NoSuchElementException, TimeoutException, ElementNotInteractableException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support.ui import Select
 
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.edge.service import Service as EdgeService
@@ -24,10 +28,13 @@ from webdriver_manager.firefox import GeckoDriverManager
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
 from webdriver_manager.opera import OperaDriverManager
 from seleniumwire import webdriver as SWWD
-from security import COOKIES
+# from security import COOKIES
 
 # from webdriver_manager.safari import SafariDriverManager
+__VERSION = '0.9.8'
 
+COOKIES = []
+# Locator variables
 ID = "id"
 TAG = "tag name"
 XPATH = "xpath"
@@ -125,13 +132,12 @@ class Selen:
                     "attributes": self.all_attrs(),
                     "text": self.elem.text}
         print(json.dumps(web_elem, indent=4))
-        print(type(self.elem))
         return self
 
     # Print text to STDOUT if it set
     def print(self, *args, **kwargs):
         first = args[0].upper()
-        if first != 'OK' and first != 'FAIL' and first != "WARN" and self.ok_print:
+        if first != 'OK' and first != 'FAIL' and first != "WARN" and first != "DIV" and self.ok_print:
             print(*args, **kwargs)
             return
 
@@ -146,6 +152,10 @@ class Selen:
         elif first == "WARN":
             fro = "\x1b[1m\x1b[33m? \x1b[0m"
             end = "\x1b[1m\x1b[33m.....WARN \x1b[0m"
+        elif first == "DIV":
+            fro = "\x1b[1m\x1b[36m% \x1b[0m"
+            div_line = "="*(150 - len(f"{args_str} {kwargs_str}"))
+            end = f"\x1b[1m\x1b[36m {div_line} \x1b[0m"
         else:
             return
 
@@ -207,15 +217,14 @@ class Selen:
     def Wait(self, *args):
         self.__start()
         args = self.__args_normalizer(args)
-        # self.print("Waiting and Looking for :", args)
+        self.print("Wait: Waiting and Looking for :", args)
         try:
             elem = self.WDW.until(EC.presence_of_element_located(args[0]))
         except NoSuchElementException:
-            self.assertion(f"{self.__RExcl}Element not found: {args[0]}, {self.__FAIL}")
+            self.assertion("FAIL", f"Element not found: {args[0]}")
             return
         except TimeoutException:
-            print("Command timed out!")
-            self.assertion(f"{self.__RExcl}Element not found: {args[0]} {self.__FAIL}")
+            self.assertion("FAIL", f"Element not found, Time out: {args[0]}")
             return
 
         self.print("OK", f"Waited and Found Element : {args}")
@@ -243,13 +252,13 @@ class Selen:
     # Service function for the element finding
     def __find_one(self, *args: tuple):
         if not self.elem:
-            self.assertion(f"Previous element = {self.elem}. Cant to find next {args} element")
+            self.assertion("FAIL", f'Previous element is empty = "{self.elem}". Can not find next {args} element')
             return
             # trying to find element
         try:
             elems = self.elem.find_elements(*args[:2])
         except NoSuchElementException:
-            self.assertion(f"Element(s) not found: {args}")
+            self.assertion("FAIL", f"Element(s) not found: {args}")
             return
 
         if len(args) > 2:
@@ -258,12 +267,12 @@ class Selen:
                 if isinstance(arg, int) and 0 <= arg < len(elems):
                     new_elems.append(elems[arg])
                 else:
-                    print("Wrong index of elements", arg, "maximum is", len(elems))
+                    self.print("FAIL", "Wrong index of elements", arg, "maximum is", len(elems))
             elems = new_elems
-
         self.__fill_elems(elems)
         if self.elem is None:
-            self.assertion(f"Element(s) not found: {args}, elems: {self.elems}, elem: {self.elem}")
+            self.assertion("FAIL", f"Element(s) not found: {args}, elems: {self.elems}, elem: {self.elem}")
+        self.print("OK", f"Element(s) found: {args}, elems count: {len(self.elems)}")
         return
 
     # Find element by tag name,  chain function for all page elements and from WebDriver directly
@@ -313,7 +322,8 @@ class Selen:
     # Get all image from element self.elem and optional checking and extract
     def img(self, *idxs, check=False):
         self.tag('img', *idxs)
-        self.print("Found images:", len(self.elems))
+        chk = "Checking" if check else ""
+        self.print("DIV", f"Images Found:  {len(self.elems)}. {chk}")
         self.stat = self.Out_dict({})
 
         for elem in self.elems:
@@ -349,7 +359,7 @@ class Selen:
                 self.stat[e_hash]['loaded'] = True
             if ok:
                 self.print("OK", "Image Checked")
-        self.print("Got images:", len(self.stat))
+        self.print("Images :", len(self.stat))
         return self
 
     # Selecting Element filter by contain data(text and attributes) from all elements on Page from WD
@@ -359,8 +369,16 @@ class Selen:
         self.contains(data, *idxs)
         return self
 
+    def __check_data_type(self, data, *args, message=''):
+        for arg in args:
+            if isinstance(data, arg):
+                return True
+        self.assertion("FAIL", f"{message}: Incorrect method parameters type {type(data)}, it can get: {args} only ")
+        return False
+
     # Selecting Element filter by contain data(text and attributes) from other element self.elem
     def contains(self, data, *idxs):
+        if not self.__check_data_type(data, str, dict, message="contains()"): return
         check_elems = []
         if not self.elem:
             check_elems = self.WD.find_elements(XPATH, "//*")  # Got all elements on page
@@ -368,7 +386,6 @@ class Selen:
             check_elems.extend(self.elems)
             for elem in self.elems:
                 check_elems.extend(elem.find_elements(CSS, "*"))
-
         result_elems = []
         if isinstance(data, dict):
             for elem in check_elems:
@@ -416,7 +433,7 @@ class Selen:
             try:
                 self.find(XPATH, '..')
             except NoSuchElementException:
-                self.assertion(f"Parent Element at level {i + 1} not found")
+                self.assertion("FAIL", f"Parent Element at level {i + 1} not found")
         return self
 
     # -------------- Functions for actions with found element(s) ----------------
@@ -424,9 +441,14 @@ class Selen:
     def click(self, action=False, pause=0):
         if action:
             self.__action_click(pause=pause)
+            self.print("Clicked in Action element:", self.elem)
         else:
-            self.elem.click()
-        self.print("Clicked element:", self.elem)
+            try:
+                self.elem.click()
+                self.print("Clicked element:", self.elem)
+            except ElementNotInteractableException:
+                self.assertion("FAIL", f'Cannot click, try to use ".click(action=True)", '
+                                       f'the Element:"{self.xpath_query()}"')
         return self
 
     # Context Click chain function with pause.
@@ -486,15 +508,31 @@ class Selen:
         self.__checker(self.elem.text, text, f'Text "{self.elem.text}" at element: "{self.xpath_query()}"')
         return self
 
-    # def texts(self, texts=[]: list):
-    #     pass
-
     # Type text in the element (self.elem)
     def type(self, text):
-        self.out_str = self.Out_str(self.elem.text)
-        self.elem.click()
+        self.out_str = self.Out_str(text)
+        # self.click(action=True)
         self.elem.clear()
         self.elem.send_keys(text)
+        return self
+
+    def dropdown_select(self, data):
+        self.__check_data_type(data, int, str, message="dropdown_select")
+        tag = self.elem.tag_name
+        if tag != "select":
+            self.assertion("FAIL", f"Cannot select from element with tag = <{tag}>, it works with <select>")
+            return self
+        dropdown = Select(self.elem)
+        try:
+            if isinstance(data, str):
+                dropdown.select_by_value(data)
+                self.print("OK", f'Selected: "{data}" from dropdown menu: "{self.xpath_query()}"')
+            # dropdown.select_by_visible_text(data)
+            if isinstance(data, int):
+                dropdown.select_by_index(data)
+                self.print("OK", f'Selected by Index:: "{data}" from dropdown menu: "{self.xpath_query()}"')
+        except NoSuchElementException:
+            self.assertion("FAIL", f'Cannot find add select by "{data}" from dropdown menu: "{self.xpath_query()}"')
         return self
 
     # Print count of selected elements of check if the count of element == asked counts and returns
@@ -537,7 +575,7 @@ class Selen:
             return self.out_str
 
         except NoSuchElementException:
-            self.assertion(f"!!! Found Incorrect abs XPATH, Got {xpath} but Can not to find Element by it")
+            self.assertion("FAIL", f"Built Incorrect abs XPATH, Got {xpath} but Can not to find Element by it")
 
         return self
 
@@ -546,8 +584,7 @@ class Selen:
         real_value = self.elem.get_attribute(attr)
 
         if real_value is None:
-            print("!!! Attribute :", attr, "NOT found")
-            self.assertion('Attribute not found')
+            self.assertion("FAIL", f'Attribute "{attr}" not found')
             return self
 
         if value is None:
@@ -567,6 +604,7 @@ class Selen:
              }; 
              return items;
              """, elem)
+
         return attrs
 
     # -------------- Functions for check any data with found element(s) ----------------
@@ -583,8 +621,36 @@ class Selen:
         # self.output = self.Output("False")
         return False
 
-    def check_page(self, data):
-        pass
+    def get(self, *args, timeout=10):
+        url = self.url
+        data = {}
+        for arg in args[:3]:
+            if isinstance(arg, str):
+                url = self.url + arg
+            elif isinstance(arg, dict):
+                data = arg
+        self.WD.set_page_load_timeout(timeout)
+        # Navigate to the web page
+        try:
+            self.WD.get(url)
+        except TimeoutException:
+            self.print('FAIL', f'Page NOT load, load timed out after {timeout} seconds')
+            return
+        self.print("DIV", f'Page "{url}" navigated')
+        self.curr_url(url)
+        if data:
+            self.check_page(data)
+
+    def check_page(self, data: dict):
+        self.print("DIV", f'Checking current page {self.WD.current_url}')
+        if "wait" in data and data["wait"]:
+            self.Wait(data["wait"])
+        if "url" in data and data["url"]:
+            self.curr_url(data["url"])
+        if "title" in data and data["title"]:
+            self.title(data["title"])
+        self.Img(check=True)
+        self.check_links()
 
     # --------- Links methods ------------------------------
     # Get all links from self.elem  page with WebDriver
@@ -593,17 +659,18 @@ class Selen:
         self.stat = self.Out_dict({})
         self.tag('a')
         link_hashes = []
+        self.print("DIV", f'Checking links (href), found: {len(self.elems)}')
         for elem in self.elems:
             e_hash = self.__get_hash(elem)
             stat = self.stat[e_hash] = {'xpath': self.xpath_query(elem)}
             href = elem.get_attribute('href').strip()
             if not href:
                 stat['href'] = None
-                self.assertion(f"!!! No Link: No attribute 'href', xpath: {stat['xpath']} {self.__FAIL}")
+                self.assertion("FAIL", f"No found Link: No attribute 'href', xpath: {stat['xpath']}")
                 continue
             elif href.startswith("mailto") or href.startswith("tel") or href.startswith("%"):
                 stat['href'] = href
-                self.print(f"!!! Found non WEB link {href}")
+                self.print("WARN" f"Found non WEB link {href}")
                 self.print(json.dumps(stat, indent=4))
                 continue
 
@@ -613,10 +680,10 @@ class Selen:
 
         self.print("Got ", len(link_hashes))
         if asynchron:
-            self.print('Async link checking...')
+            self.print('Async method using ...')
             asyncio.run(self.__check_links_async(link_hashes))
         else:
-            self.print('Sync links checking...')
+            self.print('Sync method using...')
             self.__check_links_sync(link_hashes)
 
         return self
@@ -658,7 +725,7 @@ class Selen:
             async with session.get(self.stat[e_hash]['href']) as response:
                 response.e_hash = e_hash
                 return response
-        except aiohttp.client_exceptions.ClientConnectorError as err:
+        except ClientConnectorError as err:
             print("Error:", err)
             self.stat[e_hash]['response_url'] = "Exception: Unable to reach"
             self.stat[e_hash]['code'] = None
@@ -667,20 +734,17 @@ class Selen:
 
     def __summary_stat(self):
         code_counts = Counter(value.get('code') for value in self.stat.values())
-        self.print("Checked:", len(self.stat), ", Status 200 OK is", code_counts[200])
-        print("ALL ", len(self.stat))
-        # print(json.dumps(self.stat, indent=4))
+        self.print("Checked links:", len(self.stat), ", Status 200 OK is", code_counts[200])
 
     def __response_stat(self, e_hash):
         stat = self.stat[e_hash]
         code = stat['code']
         if code == 200:
-            self.print(f"Checked  {stat['href']} .... OK")
+            self.print("OK", stat['href'], "200")
         elif code == 404:
-            print("Page:", json.dumps(stat, indent=4))
-            # self.assertion(f"Broken link found: {stat['href']} .... FAIL")
+            self.assertion("FAIL", f"Broken link found: {stat['href']} in XPATH: {stat['xpath']}")
         elif code is None:
-            self.assertion(f"Unable to reach:{stat['href']} in xpath element:{stat['xpath']} .... FAIL")
+            self.assertion("FAIL", f"Unable to reach:{stat['href']} in xpath element:{stat['xpath']}")
 
     # --------- Image Methods ---------------------------
 
@@ -702,4 +766,6 @@ class Selen:
 
 
 if __name__ == '__main__':
-    time.sleep(15)
+    print("Selen - amazing add-on for selenium framework.")
+    print("Version:", __VERSION)
+    print("https://github.com/KonstantinSKY/Selen")
