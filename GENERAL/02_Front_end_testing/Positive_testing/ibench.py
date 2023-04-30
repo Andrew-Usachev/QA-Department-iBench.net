@@ -135,10 +135,17 @@ class iBench(Selen):
         # se.Img(check=True)
         # se.check_links()
         se.Contains("Client").click()
-        se.Find(NAME, "email").type("sdfds@sdsdas.com").sleep(2).attr("value", "sdfds@sdsdas.com").parent(2)
+        se.Find(NAME, "email").type("qa@smarttech.com").sleep(2).attr("value", "qa@smarttech.com").parent(2)
         se.tag("span").attr('class', 'validation_status_ok')
-        # se.Cls("validation_status_ok").attr("class", "validation_status_ok")
-
+        se.Find(NAME, "company_name").type("Smart Technologies").attr("value", "Smart Technologies").parent(2)
+        se.tag("span").attr('class', 'validation_status_ok')
+        se.Find(NAME, "password").type("Serena2232").attr("value", "Serena2232").parent(2)
+        se.tag("span").attr('class', 'validation_status_ok')
+        se.Find(NAME, "password_copy").type("Serena2232").attr("value", "Serena2232").parent(2)
+        se.tag("span").attr('class', 'validation_status_ok')
+        se.Find(NAME, "country").dropdown_select("United States")
+        se.Cls("FormControls_checkmark__Ze3F_").click()
+        # se.Contains("Try iBench").click()
         se.sleep(20)
 
     def recovery_password(se):
@@ -161,6 +168,6 @@ if __name__ == "__main__":
     # iBench().head_nav_menu()
     # iBench('Seleniumwire').login()
 
-    iBench().registration()
+    iBench('Edge').registration()
     # iBench().login_cookies()
     print('FINISHED')
