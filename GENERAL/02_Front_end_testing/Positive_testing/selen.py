@@ -12,6 +12,7 @@ import requests
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException, TimeoutException, ElementNotInteractableException
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
@@ -59,7 +60,7 @@ class Selen:
             opts.add_argument('--disable-blink-features=AutomationControlled')
             if headless:
                 opts.add_argument('headless')
-            opts.add_argument('window-size=1600x2600')
+            opts.add_argument('window-size=3840x2160')
 
             self.WD = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=opts)
 
