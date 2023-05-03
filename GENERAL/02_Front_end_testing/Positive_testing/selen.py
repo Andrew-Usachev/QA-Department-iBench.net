@@ -3,15 +3,18 @@
 import json
 import hashlib
 import time
-from random import uniform
+from random import uniform, randint
 from collections import Counter
 import aiohttp
 import asyncio
-from aiohttp.client_exceptions import ClientConnectorError 
+from aiohttp.client_exceptions import ClientConnectorError
 import requests
-from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException, TimeoutException, ElementNotInteractableException
+from selenium import webdriver, common
+from selenium.common.exceptions import NoSuchElementException, \
+    TimeoutException, ElementNotInteractableException, InvalidArgumentException
+
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
@@ -28,10 +31,11 @@ from webdriver_manager.firefox import GeckoDriverManager
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
 from webdriver_manager.opera import OperaDriverManager
 from seleniumwire import webdriver as SWWD
+
 # from security import COOKIES
 
 # from webdriver_manager.safari import SafariDriverManager
-__VERSION = '0.9.8'
+__VERSION = '0.9.10'
 
 COOKIES = []
 # Locator variables
@@ -48,19 +52,20 @@ l_h1 = (TAG, "h1")
 l_h2 = (TAG, "h2")
 l_a = (TAG, "a")
 l_input = (TAG, "input")
-
+# keys
+RETURN = Keys.RETURN
 
 class Selen:
 
-    def __init__(self, wd="Chrome", headless=False):
+    def __init__(self, wd="Chrome", headless=False, url=''):
 
         if wd == "Chrome":
             opts = webdriver.ChromeOptions()
-            opts.add_argument('--disable-blink-features=AutomationControlled')
+            # opts.add_argument('--disable-blink-features=AutomationControlled')
             if headless:
                 opts.add_argument('headless')
-            opts.add_argument('window-size=1600x2600')
-
+                opts.add_argument('window-size=1600x2600')
+            opts.add_argument('--disable-blink-features=AutomationControlled')
             self.WD = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=opts)
 
         elif wd == "Firefox":
@@ -104,12 +109,13 @@ class Selen:
         # self.WD.maximize_window()
         self.AC = ActionChains(self.WD)
         self.WDW = WebDriverWait(self.WD, 10)
-        self.url = ""
+        self.url = url if url else ""
         self.ok_assert = True
         self.ok_print = True
         self.IS = None
 
     # TODO Class Elem
+    # TODO Page Source
     class Out_str(str):
         def out(self, message=''):
             print(message, self)
@@ -154,7 +160,7 @@ class Selen:
             end = "\x1b[1m\x1b[33m.....WARN \x1b[0m"
         elif first == "DIV":
             fro = "\x1b[1m\x1b[36m% \x1b[0m"
-            div_line = "="*(150 - len(f"{args_str} {kwargs_str}"))
+            div_line = "=" * (150 - len(f"{args_str} {kwargs_str}"))
             end = f"\x1b[1m\x1b[36m {div_line} \x1b[0m"
         else:
             return
@@ -311,7 +317,8 @@ class Selen:
         return self
 
     def Id(self, id_name: str, *idxs):
-        self.Find(id_name, *idxs)
+        self.Find(By.ID, id_name, *idxs)
+        return self
 
     # Get all image from all page from WebDriver object and optional checking and install
     def Img(self, *idxs, check=False):
@@ -368,13 +375,6 @@ class Selen:
         self.elems = []
         self.contains(data, *idxs)
         return self
-
-    def __check_data_type(self, data, *args, message=''):
-        for arg in args:
-            if isinstance(data, arg):
-                return True
-        self.assertion("FAIL", f"{message}: Incorrect method parameters type {type(data)}, it can get: {args} only ")
-        return False
 
     # Selecting Element filter by contain data(text and attributes) from other element self.elem
     def contains(self, data, *idxs):
@@ -438,39 +438,40 @@ class Selen:
 
     # -------------- Functions for actions with found element(s) ----------------
     # Click chain function have 2 modes simple and with action chains with pause.
-    def click(self, action=False, pause=0):
-        if action:
-            self.__action_click(pause=pause)
-            self.print("Clicked in Action element:", self.elem)
-        else:
+    def click(self, mode='', action=False, pause=0, random=False):
+        if random:
+            idx = randint(0, len(self.elems) - 1)
+            self.elem = self.elems[idx]
+
+        if not mode and not action:
             try:
                 self.elem.click()
                 self.print("Clicked element:", self.elem)
             except ElementNotInteractableException:
-                self.assertion("FAIL", f'Cannot click, try to use ".click(action=True)", '
-                                       f'the Element:"{self.xpath_query()}"')
+                self.assertion("FAIL", f"""Cannot Click, try to use ".click(mode='action')", '
+                                       f' the Element:"{self.xpath_query()}""")
+
+        elif isinstance(mode, int) or isinstance(mode, float):  # click and hold
+            # self.__hold_click(hold=mode, pause=pause, move=elem)
+            pass
+        else:
+            try:
+                self.__action_click(mode=mode.lower(), pause=pause)
+                self.print(mode.upper(), "Action Clicked, element:", self.elem)
+            except:
+                self.assertion("FAIL", f"""Cannot Action {mode.upper()} Click the Element:"{self.xpath_query()}""")
         return self
 
-    # Context Click chain function with pause.
-    def context_click(self, pause=0):
-        self.__action_click(mode='context', pause=pause)
-        self.print("Context Clicked element:", self.elem)
-        return self
-
-    # Double Click with action chains and pause.
-    def double_click(self, pause=0):
-        self.__action_click(mode='double', pause=pause)
-        self.print("Double Clicked element:", self.elem)
-        return self
-
-    # Service functions for any clicks
+    # Service functions for any action clicks
     def __action_click(self, mode='', pause=0):
         self.AC.move_to_element(self.elem)
         if pause > 0:
             self.print("Pause before click, seconds:", pause)
             self.AC.pause(pause)
-        under = '_' if mode else ''
-        eval(f"self.AC.{mode}{under}click()")
+        mode = '' if mode == 'action' or not mode else mode + '_'
+
+        eval(f"self.AC.{mode}click()")
+
         self.AC.perform()
 
     # Display hidden and invisible element
@@ -516,12 +517,19 @@ class Selen:
         self.elem.send_keys(text)
         return self
 
-    def dropdown_select(self, data):
-        self.__check_data_type(data, int, str, message="dropdown_select")
+    def dropdown_select(self, data=None):
         tag = self.elem.tag_name
         if tag != "select":
             self.assertion("FAIL", f"Cannot select from element with tag = <{tag}>, it works with <select>")
             return self
+
+        if not data:      # Get Random option
+            elems = self.elem.find_elements(By.TAG_NAME, "option")
+            elem = elems[randint(0, len(elems) - 1)]
+            data = elem.get_attribute("value")
+            self.print("OK", f"Random option, value: {data}, text: {elem.text}")
+
+        self.__check_data_type(data, int, str,  message="dropdown_select")
         dropdown = Select(self.elem)
         try:
             if isinstance(data, str):
@@ -621,34 +629,47 @@ class Selen:
         # self.output = self.Output("False")
         return False
 
+    def __check_data_type(self, data, *args, message=''):
+        for arg in args:
+            if isinstance(data, arg):
+                return True
+        self.assertion("FAIL", f"{message}: Incorrect method parameters type {type(data)}, it can get: {args} only ")
+        return False
+
     def get(self, *args, timeout=10):
-        url = self.url
+        url = self.url.strip().rstrip("/") + "/"
         data = {}
         for arg in args[:3]:
             if isinstance(arg, str):
-                url = self.url + arg
+                url = url + arg.strip().strip("/") + "/"
             elif isinstance(arg, dict):
                 data = arg
         self.WD.set_page_load_timeout(timeout)
         # Navigate to the web page
+        if not url:
+            self.assertion("FAIL", f"NO any url to navigate to any page")
+            return
         try:
             self.WD.get(url)
+        except InvalidArgumentException:
+            self.assertion('FAIL', f'Incorrect URL: "{url}"')
         except TimeoutException:
-            self.print('FAIL', f'Page NOT load, load timed out after {timeout} seconds')
+            self.assertion('FAIL', f'Page NOT load, load timed out after {timeout} seconds')
             return
         self.print("DIV", f'Page "{url}" navigated')
         self.curr_url(url)
         if data:
             self.check_page(data)
 
-    def check_page(self, data: dict):
+    def check_page(self, data=None):
         self.print("DIV", f'Checking current page {self.WD.current_url}')
-        if "wait" in data and data["wait"]:
-            self.Wait(data["wait"])
-        if "url" in data and data["url"]:
-            self.curr_url(data["url"])
-        if "title" in data and data["title"]:
-            self.title(data["title"])
+        if data:
+            if "wait" in data and data["wait"]:
+                self.Wait(data["wait"])
+            if "url" in data and data["url"]:
+                self.curr_url(data["url"])
+            if "title" in data and data["title"]:
+                self.title(data["title"])
         self.Img(check=True)
         self.check_links()
 
