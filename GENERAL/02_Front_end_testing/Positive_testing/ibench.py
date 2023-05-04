@@ -55,7 +55,7 @@ class iBench(Selen):
         se.curr_url("https://ibench.net/stats").title("Daily updates | iBench - real-time developers Hiring")
         # se.Img(check=True).check_links()
 
-        sleep(100)
+        # sleep(5)
 
     def about(se):
         se.Wait(l_h1).text(
@@ -124,6 +124,7 @@ class iBench(Selen):
 
     def registration(se):
         se.WD.get(se.url)
+        se.WD.maximize_window()
         se.Wait(CLASS, "Navigation_btn__3RPM8").text("Register").out("Message: ")
         se.title("iBench - real-time developers Hiring").curr_url("https://ibench.net/")
         # se.Cls("Navigation_auth_buttons__29gW3").contains("Register").click()
@@ -135,11 +136,21 @@ class iBench(Selen):
         # se.Img(check=True)
         # se.check_links()
         se.Contains("Client").click()
-        se.Find(NAME, "email").type("sdfds@sdsdas.com").sleep(2).attr("value", "sdfds@sdsdas.com").parent(2)
+        se.Find(NAME, "email").type("qa@smarttech.com").sleep(2).attr("value", "qa@smarttech.com").parent(2)
         se.tag("span").attr('class', 'validation_status_ok')
+        se.Find(NAME, "company_name").type("Smart Technologies").attr("value", "Smart Technologies").parent(2)
+        se.tag("span").attr('class', 'validation_status_ok')
+        se.Find(NAME, "password").type("Serena2232").attr("value", "Serena2232").parent(2)
+        se.tag("span").attr('class', 'validation_status_ok')
+        se.Find(NAME, "password_copy").type("Serena2232").attr("value", "Serena2232").parent(2)
+        se.tag("span").attr('class', 'validation_status_ok')
+        se.Find(NAME, "country").dropdown_select("United States").click()
+        se.Find(NAME, "terms_accepted").click(action=True)
+        se.Contains("Try iBench").click(action=True)
+        se.sleep(5)
         # se.Cls("validation_status_ok").attr("class", "validation_status_ok")
 
-        se.sleep(20)
+
 
     def recovery_password(se):
         se.WD.get(se.url + "login")
@@ -152,6 +163,47 @@ class iBench(Selen):
         se.check_links()
         se.Contains({"name": "email", "type": "email"}).out()
 
+
+    def find_it_company(se):
+        se.WD.get(se.url)
+        # se.WD.maximize_window()
+        se.login()
+        # se.Find(XPATH, "//li/a[contains(text(),'Find IT companies')]").click()
+        # se.Contains("Find IT companies").click()
+        se.Cls("DashboardMenu_menuLink__JkSw7", 3).click()
+        se.curr_url('https://ibench.net/outsource').title("Outsource | iBench - real-time developers Hiring").sleep(3)
+        se.Wait(l_h1).text("Find IT companies")
+        se.Cls("Outsource_freeSlot__7mxFS").click()
+        se.Find(NAME, "vetted").dropdown_select("1").click()
+        se.parent(2).tag("span").attr('class', 'validation_status_ok')
+        se.Find(CLASS, "rw-input-reset").type("United States" + Keys.ENTER + "Canada" + Keys.ENTER)
+        se.Find(NAME, "name").type("Project for QA analysis")
+        se.Find(CLASS, "ql-editor").type("Our project is a software that generates leads and connects companies with professionals")
+        se.Cls("rw-input-reset", 1).type("Information Technology" + Keys.ENTER + "Technology" + Keys.ENTER + Keys.ESCAPE)
+        # se.Contains({"aria-owns":"rw_4_listbox rw_4_notify_area rw_4_taglist"}).type("Information Technology" + Keys.ENTER + "Technology" + Keys.ENTER)
+        se.Contains("Up to $200,000").click()
+        se.Tag("html").elem.send_keys(Keys.PAGE_DOWN)
+        se.Contains("Next Quartal").click()
+        # se.Tag("html").elem.send_keys(Keys.PAGE_DOWN)
+        se.Find(NAME, "links").type('https://www.linkedin.com/')
+        se.Cls("OutsourceAdding_submit__1o3MH").click(action=True)
+        se.sleep(5)
+
+    def find_employee(se):
+        # se.WD.get(se.url + "login")
+        se.login()
+        se.Cls("DashboardMenu_menuLink__JkSw7", 2).click()
+        se.curr_url('https://ibench.net/search-employee-slots').title("iBench - real-time developers Hiring").sleep(2)
+        # se.Cls("DashboardMenu_menuLink__JkSw7").contains("Find Employee").click()
+        se.Cls("FreelancerSlots_free_slot__6EdsB").click()
+        se.Find(NAME, "vetted").dropdown_select(2)
+        # se.Find(CLASS, "rw-input-reset").type("United States" + Keys.ENTER)
+        # se.Cls("rw-select").tag("span").click(random=True)
+        # se.Cls("FormControls_label__1UFBV").tag("span").click(random=True)
+
+        se.sleep(5)
+
+
     def main(se):
         pass
 
@@ -161,6 +213,6 @@ if __name__ == "__main__":
     # iBench().head_nav_menu()
     # iBench('Seleniumwire').login()
 
-    iBench().registration()
+    iBench().find_it_company()
     # iBench().login_cookies()
     print('FINISHED')
