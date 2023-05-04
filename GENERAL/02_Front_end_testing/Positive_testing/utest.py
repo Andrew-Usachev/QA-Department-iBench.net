@@ -23,9 +23,14 @@ class ChromePositiveTest(unittest.TestCase):
     def test_recovery_password(self):
         self.ibench.recovery_password()
 
+    def find_it_company(self):
+        self.ibench.find_it_company()
+
     def tearDown(self) -> None:
         self.ibench.WD.close()
         self.ibench = None
+
+
 
 
 class FirefoxPositiveTest(ChromePositiveTest):
