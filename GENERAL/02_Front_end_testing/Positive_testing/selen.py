@@ -59,7 +59,7 @@ class Selen:
             opts.add_argument('--disable-blink-features=AutomationControlled')
             if headless:
                 opts.add_argument('headless')
-            opts.add_argument('window-size=3840x2160')
+            opts.add_argument('window-size=1600x2600')
 
             self.WD = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=opts)
 
