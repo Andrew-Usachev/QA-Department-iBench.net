@@ -189,6 +189,19 @@ class iBench(Selen):
         se.Cls("OutsourceAdding_submit__1o3MH").click(action=True)
         se.sleep(5)
 
+    def find_employee(se):
+        # se.WD.get(se.url + "login")
+        se.login()
+        se.Cls("DashboardMenu_menuLink__JkSw7", 2).click()
+        se.curr_url('https://ibench.net/search-employee-slots').title("iBench - real-time developers Hiring").sleep(2)
+        # se.Cls("DashboardMenu_menuLink__JkSw7").contains("Find Employee").click()
+        se.Cls("FreelancerSlots_free_slot__6EdsB").click()
+        se.Find(NAME, "vetted").dropdown_select(2)
+        # se.Find(CLASS, "rw-input-reset").type("United States" + Keys.ENTER)
+        # se.Cls("rw-select").tag("span").click(random=True)
+        # se.Cls("FormControls_label__1UFBV").tag("span").click(random=True)
+
+        se.sleep(5)
 
 
     def main(se):
