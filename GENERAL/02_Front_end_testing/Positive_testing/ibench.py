@@ -200,9 +200,9 @@ class iBench(Selen):
         # se.Find(CLASS, "rw-input-reset").type("United States" + Keys.ENTER) # working for one country
         se.Find(NAME, "location").dropdown_multiselect(random_max=2)
         se.Find(NAME, "job_title_id").dropdown_select(3).click()
-        se.Find(CLASS, "ql-editor").type("Our company is currently looking for a talented  Developer to join our team.").sleep(2)
+        se.Find(CLASS, "ql-editor", 0).type("Our company is currently looking for a talented  Developer to join our team.").sleep(2)
         se.Cls("SimpleEditor_label__3TQYk").click()
-        # se.Find(CLASS, "ql-editor").type("Excellent problem-solving skills and attention to detail.") # help!
+        se.Find(CLASS, "ql-editor", 1).type("Excellent problem-solving skills and attention to detail.")
         se.Find(NAME, "rate_month").type("100")
         se.Find(NAME, "position_level_id").dropdown_select(3).click()
         se.Find(NAME, "experience").dropdown_select(3).click()
