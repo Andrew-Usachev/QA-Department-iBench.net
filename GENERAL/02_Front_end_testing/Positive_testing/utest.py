@@ -26,6 +26,12 @@ class ChromePositiveTest(unittest.TestCase):
     def find_it_company(self):
         self.ibench.find_it_company()
 
+    def nt_registration_not_exist_email(self):
+        self.ibench.nt_registration_not_exist_email()
+
+    def nt_registration_200_symbol_pswd(self):
+        self.ibench.nt_registration_200_symbol_pswd()
+
     def tearDown(self) -> None:
         self.ibench.WD.close()
         self.ibench = None
