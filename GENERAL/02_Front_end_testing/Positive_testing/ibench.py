@@ -214,7 +214,44 @@ class iBench(Selen):
         se.Find(NAME, "skills").dropdown_multiselect(random_max=5)
         se.Contains("Activate").click(action=True)
         se.sleep(5)
+    
+    def sell_lead(se):
+        se.login()
+        se.Cls("DashboardMenu_menuLink__JkSw7").contains("Sell leads").click()
+        se.check_page({"wait": (TAG, "h1"),
+                       "url": "https://ibench.net/sell-leads",
+                       "title": "Developers | iBench - real-time developers Hiring"
+                       })
 
+        se.Find(CLASS, "SellLeadButton_sellLeadsButton__3c0L8").click('')
+        se.check_page({"wait": (TAG, "form"),
+                       "url": "https://ibench.net/add-lead",
+                       "title": "Sell leads | iBench - real-time developers Hiring"
+                       })
+
+        se.Wait(NAME, "vetted").dropdown_select()
+        se.Cls("LeadForm_leadType__XWd1z").tag("span").click(random=True)
+        se.Cls("LeadForm_qualificationLevelType__3PXrP").tag("span").click(random=True)
+        se.Find(NAME, "fixed_price").type("10000")
+        se.Find(NAME, "lead_sales_comment").type("Test comments 1")
+        se.Find(NAME, "country").dropdown_select()
+        se.Tag("button").contains("Next").click()
+        se.Wait(CLASS, "LeadForm_aboutProject__OxQEz").text("About Project")
+        se.Find(NAME, "project_type_id").dropdown_select()
+        se.Find(NAME, "project_name").type("Project1")
+        se.Find(NAME, "project_description").type("Project descr")
+        se.Find(NAME, "budget").type(23423)
+        se.Find(CLASS, "ant-picker-input").tag("input").elem.send_keys("04/06/2023")
+        se.Find(NAME, "description_link").type("ibench.us")
+        se.Find(NAME, "additional_comment").type("additional comment")
+        se.Find(CLASS, "LeadForm_submit__1Ax9Y").click()
+        se.Wait(CLASS, "CongratsModal_modalHeader__yA0p6").text("Congrats!")
+        se.Find(CLASS, "CongratsModal_gotItButton__tJFaf").click()
+
+        se.check_page({"wait": (TAG, "h1"),
+                       "url": "Marketplace / Leads | iBench - real-time developers Hiring",
+                       "title": "Sell leads | iBench - real-time developers Hiring"
+                       })
 
     def main(se):
         pass
