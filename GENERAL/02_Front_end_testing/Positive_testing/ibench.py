@@ -304,7 +304,6 @@ class iBench(Selen):
         se.title("Daily updates | iBench - real-time developers Hiring")
         try:
             se.title("Daily updates | iBench - real-time developers Hiring")
-            se.print("OK", "Registration successful without maching passwords")
         except NoSuchElementException:
             print("FAIL", "Maching passwords are required for registrations to pass")
         se.sleep(5)
