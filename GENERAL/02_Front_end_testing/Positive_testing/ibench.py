@@ -271,6 +271,39 @@ class iBench(Selen):
         se.Contains("Try iBench").click(action=True)
         se.sleep(5)
 
+    # Check registration with any random password and other random password copy to verify allowance of different passwords
+    def nt_registration_with_not_matched_pswds(se):
+        se.WD.get(se.url)
+        se.WD.maximize_window()
+        se.Wait(CLASS, "Navigation_btn__3RPM8").text("Register").out("Message: ")
+        se.title("iBench - real-time developers Hiring").curr_url("https://ibench.net/")
+        # se.Cls("Navigation_auth_buttons__29gW3").contains("Register").click()
+        se.Contains("Register").click()
+        se.Wait(TAG, "h2").text("Create your iBench account")
+        se.title("Registration | iBench - real-time developers Hiring").curr_url("https://ibench.net/registration")
+        # se.Img(check=True)
+        se.Xpath("/html/body[1]/div[2]/span[1]/img[1] ").display()
+        # se.Img(check=True)
+        # se.check_links()
+        se.Contains("Client").click()
+        se.Find(NAME, "email").type("TechForMed@medicalgr.com").sleep(2).attr("value", "TechForMed@medicalgr.com").parent(2)
+        se.tag("span").attr('class', 'validation_status_ok')
+        se.Find(NAME, "company_name").type("Smart Technologies").attr("value", "Smart Technologies").parent(2)
+        se.tag("span").attr('class', 'validation_status_ok')
+        se.print("FAIL", "doesn't match `Password`")
+        se.Find(NAME, "password").type("1234567").attr("value", "1234567").parent(2)
+        se.tag("span").attr('class', 'validation_status_ok')
+
+        try:
+            se.Find(NAME, "password_copy").click(action=True).type("7654321").attr("value", "7654321").parent(2)
+            se.tag("span").attr('class', 'validation_status_ok')
+        except NoSuchElementException:
+            se.print("FAIL", "doesn't match `Password`")
+        se.Find(NAME, "country").dropdown_select("United States").click()
+        se.Find(NAME, "terms_accepted").click(action=True)
+        se.Contains("Try iBench").click(action=True)
+        se.sleep(5)
+
     def main(se):
         pass
 
@@ -285,5 +318,6 @@ if __name__ == "__main__":
     # iBench().login_cookies()
     # iBench().nt_registration_not_exist_email()
     # iBench().nt_registration_200_symbol_pswd()
+    iBench().nt_registration_with_not_matched_pswds()
 
     print('FINISHED')
