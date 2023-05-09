@@ -142,7 +142,7 @@ class iBench(Selen):
         se.tag("span").attr('class', 'validation_status_ok')
         se.Find(NAME, "password").type("Serena2232").attr("value", "Serena2232").parent(2)
         se.tag("span").attr('class', 'validation_status_ok')
-        se.Find(NAME, "password_copy").type("Serena2232").attr("value", "Serena2232").parent(2)
+        se.Find(NAME, "password_copy").click(action=True).type("Serena2232").attr("value", "Serena2232").parent(2)
         se.tag("span").attr('class', 'validation_status_ok')
         se.Find(NAME, "country").dropdown_select("United States").click()
         se.Find(NAME, "terms_accepted").click(action=True)
@@ -178,7 +178,7 @@ class iBench(Selen):
         se.parent(2).tag("span").attr('class', 'validation_status_ok')
         # se.Find(CLASS, "rw-input-reset").type("United States" + Keys.ENTER + "Canada" + Keys.ENTER)
         se.Find(NAME, "location").dropdown_multiselect(random_max=3)
-        se.Find(NAME, "name").type("Project for QA analysis")
+        se.Find(NAME, "name").type("QA Project")
         se.Find(CLASS, "ql-editor").type("Our project is a software ")
         se.Find(NAME, "markets").dropdown_multiselect(random_max=4)
         # old not updated version of the script works in key-chains
@@ -213,6 +213,95 @@ class iBench(Selen):
         se.Cls("label").attr("class", "form_control undefined validation_ok")
         se.Find(NAME, "skills").dropdown_multiselect(random_max=5)
         se.Contains("Activate").click(action=True)
+        se.sleep(5)
+
+    # Check registration with any random not existing email and not requires email confirmation as client
+    def nt_registration_not_exist_email(se):
+        se.WD.get(se.url)
+        se.WD.maximize_window()
+        se.Wait(CLASS, "Navigation_btn__3RPM8").text("Register").out("Message: ")
+        se.title("iBench - real-time developers Hiring").curr_url("https://ibench.net/")
+        # se.Cls("Navigation_auth_buttons__29gW3").contains("Register").click()
+        se.Contains("Register").click()
+        se.Wait(TAG, "h2").text("Create your iBench account")
+        se.title("Registration | iBench - real-time developers Hiring").curr_url("https://ibench.net/registration")
+        # se.Img(check=True)
+        se.Xpath("/html/body[1]/div[2]/span[1]/img[1] ").display()
+        # se.Img(check=True)
+        # se.check_links()
+        se.Contains("Client").click()
+        se.Find(NAME, "email").type("9173454815@strange.email").sleep(2).attr("value", "9173454815@strange.email").parent(2)
+        se.tag("span").attr('class', 'validation_status_ok')
+        se.Find(NAME, "company_name").type("Smart Technologies").attr("value", "Smart Technologies").parent(2)
+        se.tag("span").attr('class', 'validation_status_ok')
+        se.Find(NAME, "password").type("Serena2232").attr("value", "Serena2232").parent(2)
+        se.tag("span").attr('class', 'validation_status_ok')
+        se.Find(NAME, "password_copy").click(action=True).type("Serena2232").attr("value", "Serena2232").parent(2)
+        se.tag("span").attr('class', 'validation_status_ok')
+        se.Find(NAME, "country").dropdown_select("United States").click()
+        se.Find(NAME, "terms_accepted").click(action=True)
+        se.Contains("Try iBench").click(action=True)
+        se.sleep(5)
+
+    # Check registration with any random password that contains of 201 symbol
+    def nt_registration_200_symbol_pswd(se):
+        se.WD.get(se.url)
+        se.WD.maximize_window()
+        se.Wait(CLASS, "Navigation_btn__3RPM8").text("Register").out("Message: ")
+        se.title("iBench - real-time developers Hiring").curr_url("https://ibench.net/")
+        # se.Cls("Navigation_auth_buttons__29gW3").contains("Register").click()
+        se.Contains("Register").click()
+        se.Wait(TAG, "h2").text("Create your iBench account")
+        se.title("Registration | iBench - real-time developers Hiring").curr_url("https://ibench.net/registration")
+        # se.Img(check=True)
+        se.Xpath("/html/body[1]/div[2]/span[1]/img[1] ").display()
+        # se.Img(check=True)
+        # se.check_links()
+        se.Contains("Client").click()
+        se.Find(NAME, "email").type("TechForMed@medicalgr.com").sleep(2).attr("value", "TechForMed@medicalgr.com").parent(2)
+        se.tag("span").attr('class', 'validation_status_ok')
+        se.Find(NAME, "company_name").type("Smart Technologies").attr("value", "Smart Technologies").parent(2)
+        se.tag("span").attr('class', 'validation_status_ok')
+        se.Find(NAME, "password").type("111111111122222222223333333333444444444455555555556666666666777777777788888888889999999999000000000011111111112222222222333333333344444444445555555555666666666677777777778888888888999999999900000000001").attr("value", "111111111122222222223333333333444444444455555555556666666666777777777788888888889999999999000000000011111111112222222222333333333344444444445555555555666666666677777777778888888888999999999900000000001").parent(2)
+        se.tag("span").attr('class', 'validation_status_ok')
+        se.Find(NAME, "password_copy").click(action=True).type("111111111122222222223333333333444444444455555555556666666666777777777788888888889999999999000000000011111111112222222222333333333344444444445555555555666666666677777777778888888888999999999900000000001").attr("value", "111111111122222222223333333333444444444455555555556666666666777777777788888888889999999999000000000011111111112222222222333333333344444444445555555555666666666677777777778888888888999999999900000000001").parent(2)
+        se.tag("span").attr('class', 'validation_status_ok')
+        se.Find(NAME, "country").dropdown_select("United States").click()
+        se.Find(NAME, "terms_accepted").click(action=True)
+        se.Contains("Try iBench").click(action=True)
+        se.sleep(5)
+
+    # Check registration with any random password and other random password copy to verify allowance of different passwords
+    def nt_registration_with_not_matched_pswds(se):
+        se.WD.get(se.url)
+        se.WD.maximize_window()
+        se.Wait(CLASS, "Navigation_btn__3RPM8").text("Register").out("Message: ")
+        se.title("iBench - real-time developers Hiring").curr_url("https://ibench.net/")
+        # se.Cls("Navigation_auth_buttons__29gW3").contains("Register").click()
+        se.Contains("Register").click()
+        se.Wait(TAG, "h2").text("Create your iBench account")
+        se.title("Registration | iBench - real-time developers Hiring").curr_url("https://ibench.net/registration")
+        # se.Img(check=True)
+        se.Xpath("/html/body[1]/div[2]/span[1]/img[1] ").display()
+        # se.Img(check=True)
+        # se.check_links()
+        se.Contains("Client").click()
+        se.Find(NAME, "email").type("TechForMed@medicalgr.com").sleep(2).attr("value", "TechForMed@medicalgr.com").parent(2)
+        se.tag("span").attr('class', 'validation_status_ok')
+        se.Find(NAME, "company_name").type("Smart Technologies").attr("value", "Smart Technologies").parent(2)
+        se.tag("span").attr('class', 'validation_status_ok')
+        se.print("FAIL", "doesn't match `Password`")
+        se.Find(NAME, "password").type("1234567").attr("value", "1234567").parent(2)
+        se.tag("span").attr('class', 'validation_status_ok')
+
+        try:
+            se.Find(NAME, "password_copy").click(action=True).type("7654321").attr("value", "7654321").parent(2)
+            se.tag("span").attr('class', 'validation_status_ok')
+        except NoSuchElementException:
+            se.print("FAIL", "doesn't match `Password`")
+        se.Find(NAME, "country").dropdown_select("United States").click()
+        se.Find(NAME, "terms_accepted").click(action=True)
+        se.Contains("Try iBench").click(action=True)
         se.sleep(5)
     
     def sell_lead(se):
@@ -251,7 +340,7 @@ class iBench(Selen):
         se.check_page({"wait": (TAG, "h1"),
                        "url": "Marketplace / Leads | iBench - real-time developers Hiring",
                        "title": "Sell leads | iBench - real-time developers Hiring"
-                       })
+                       
 
     def main(se):
         pass
@@ -261,8 +350,12 @@ if __name__ == "__main__":
     # iBench('Edge').foot_nav_menu()
     # iBench().head_nav_menu()
     # iBench('Seleniumwire').login()
-
-    iBench().find_employee()
+    # iBench().registration()
+    # iBench().find_employee()
     # iBench().find_it_company()
     # iBench().login_cookies()
+    # iBench().nt_registration_not_exist_email()
+    # iBench().nt_registration_200_symbol_pswd()
+    iBench().nt_registration_with_not_matched_pswds()
+
     print('FINISHED')
