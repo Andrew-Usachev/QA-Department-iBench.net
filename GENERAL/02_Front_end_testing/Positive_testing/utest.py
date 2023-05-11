@@ -35,6 +35,8 @@ class ChromePositiveTest(unittest.TestCase):
     def nt_registration_with_not_matched_pswds(self):
         self.ibench.nt_registration_with_not_matched_pswds()
 
+    def nt_registration_with_not_accepted_terms(self):
+        self.ibench.nt_registration_with_not_accepted_terms()
     def tearDown(self) -> None:
         self.ibench.WD.close()
         self.ibench = None
