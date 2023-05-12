@@ -283,9 +283,9 @@ class iBench(Selen):
         se.tag("span").attr('class', 'validation_status_ok')
         se.Find(NAME, "company_name").type("Smart Technologies").attr("value", "Smart Technologies").parent(2)
         se.tag("span").attr('class', 'validation_status_ok')
-        se.Find(NAME, "password").type("111111111122222222223333333333444444444455555555556666666666777777777788888888889999999999000000000011111111112222222222333333333344444444445555555555666666666677777777778888888888999999999900000000001").attr("value", "111111111122222222223333333333444444444455555555556666666666777777777788888888889999999999000000000011111111112222222222333333333344444444445555555555666666666677777777778888888888999999999900000000001").parent(2)
+        se.Find(NAME, "password").type("1"*10+"2"*10+"3"*10+"4"*10+"5"*10+"6"*10+"7"*10+"8"*10+"9"*10+"0"*10+"1").attr("value", "1"*10+"2"*10+"3"*10+"4"*10+"5"*10+"6"*10+"7"*10+"8"*10+"9"*10+"0"*10+"1").parent(2)
         se.tag("span").attr('class', 'validation_status_ok')
-        se.Find(NAME, "password_copy").click(action=True).type("111111111122222222223333333333444444444455555555556666666666777777777788888888889999999999000000000011111111112222222222333333333344444444445555555555666666666677777777778888888888999999999900000000001").attr("value", "111111111122222222223333333333444444444455555555556666666666777777777788888888889999999999000000000011111111112222222222333333333344444444445555555555666666666677777777778888888888999999999900000000001").parent(2)
+        se.Find(NAME, "password_copy").click(action=True).type("1"*10+"2"*10+"3"*10+"4"*10+"5"*10+"6"*10+"7"*10+"8"*10+"9"*10+"0"*10+"1").attr("value", "1"*10+"2"*10+"3"*10+"4"*10+"5"*10+"6"*10+"7"*10+"8"*10+"9"*10+"0"*10+"1").parent(2)
         se.tag("span").attr('class', 'validation_status_ok')
         se.Find(NAME, "country").dropdown_select("United States").click()
         se.Find(NAME, "terms_accepted").click(action=True)
@@ -396,7 +396,118 @@ class iBench(Selen):
         se.check_page({"wait": (TAG, "h1"),
                        "url": "Marketplace / Leads | iBench - real-time developers Hiring",
                        "title": "Sell leads | iBench - real-time developers Hiring"})
-                       
+
+    # Verify system not accepts certain inserted value (digits only) into "User profile"(Base info)
+    def adhoc_system_not_accepts_certain_value_digits(se):
+        se.login()
+        se.Cls("Navigation_profile__hWSiK").click()
+        se.check_page({"wait": (TAG, "h1"),
+                       "url":"https://ibench.net/profile",
+                       "title":"Startup profile | iBench - real-time developers search"})
+        # se.Find(CLASS, "Profile_subMenuWrapper__fmpJL").attr("href", "/profile-edit").click(action=True)
+        se.Find(XPATH, "//a[contains(text(),'Edit profile')]").click(action=True)
+        se.check_page({"wait": (TAG, "h1"),
+                       "url": "https://ibench.net/profile-edit",
+                       "title": "Profile editing | iBench - real-time developers Hiring"})
+        se.Find(NAME, "representative_name").type("1234567890"*5)
+        se.Find(NAME, "position").type("1234567890")
+        se.Tag("button").contains("Submit").click(action=True).count()
+        se.sleep(10)
+
+    # Verify system not accepts certain inserted value (symbols only) into "User profile"(Company)
+    def adhoc_system_not_accepts_certain_value_symbols(se):
+        se.login()
+        se.Cls("Navigation_profile__hWSiK").click()
+        se.check_page({"wait": (TAG, "h1"),
+                       "url": "https://ibench.net/profile",
+                       "title": "Startup profile | iBench - real-time developers search"})
+        # se.Find(CLASS, "Profile_subMenuWrapper__fmpJL").attr("href", "/profile-edit").click(action=True)
+        se.Find(XPATH, "//a[contains(text(),'Edit profile')]").click(action=True)
+        se.check_page({"wait": (TAG, "h1"),
+                       "url": "https://ibench.net/profile-edit",
+                       "title": "Profile editing | iBench - real-time developers Hiring"})
+        se.Tag("ul").contains("Company").click(action=True)
+        se.Find(NAME, "company_name").type(",").parent(2)
+        se.tag("span").attr('class', 'validation_status_ok')
+        se.Find(NAME, "site").type(",").parent(2)
+        se.tag("span").attr('class', 'validation_status_ok')
+        se.Find(NAME, "business_phone").type(",").parent(2)
+        se.tag("span").attr('class', 'validation_status_ok')
+        se.Find(NAME, "city").type(",").parent(2)
+        se.tag("span").attr('class', 'validation_status_ok')
+        se.Find(NAME, "address").type(",").parent(2)
+        se.tag("span").attr('class', 'validation_status_ok')
+        se.Tag("button").contains("Submit").click(action=True).count()
+        se.sleep(10)
+
+    # Verify system not accepts certain inserted value (symbols only) into "User profile"(Base info)
+    def adhoc_system_has_restrictions_on_field_symbol_amount(se):
+        se.login()
+        se.Cls("Navigation_profile__hWSiK").click()
+        se.check_page({"wait": (TAG, "h1"),
+                       "url": "https://ibench.net/profile",
+                       "title": "Startup profile | iBench - real-time developers search"})
+        # se.Find(CLASS, "Profile_subMenuWrapper__fmpJL").attr("href", "/profile-edit").click(action=True)
+        se.Find(XPATH, "//a[contains(text(),'Edit profile')]").click(action=True)
+        se.check_page({"wait": (TAG, "h1"),
+                       "url": "https://ibench.net/profile-edit",
+                       "title": "Profile editing | iBench - real-time developers Hiring"})
+        se.Tag("ul").contains("Additional info").click(action=True)
+        se.Find(CLASS, "ql-editor").type("123")
+        se.Find(NAME, "market_id").dropdown_select().parent(2)
+        se.tag("span").attr('class', 'validation_status_ok')
+        se.Find(NAME, "telegram").type("123").parent(2)
+        se.tag("span").attr('class', 'validation_status_ok')
+        se.Find(NAME, "linkedin").type("78").parent(2)
+        se.tag("span").attr('class', 'validation_status_ok')
+        se.Find(NAME, "twitter").type("123").parent(2)
+        se.tag("span").attr('class', 'validation_status_ok')
+        se.Find(NAME, "facebook").type("132").parent(2)
+        se.tag("span").attr('class', 'validation_status_ok')
+        se.Tag("button").contains("Submit").click(action=True).count()
+        se.sleep(10)
+
+    # Verify system not accepts certain inserted value (any symbols except digits) into "Fixed price" field (Sell lead)
+    def adhoc_system_has_restrictions_on_field_fixed_price(se):
+        se.login()
+        se.Cls("DashboardMenu_menuLink__JkSw7").contains("Sell leads").click()
+        se.check_page({"wait": (TAG, "h1"),
+                       "url": "https://ibench.net/sell-leads",
+                       "title": "Developers | iBench - real-time developers Hiring"
+                       })
+
+        se.Find(CLASS, "SellLeadButton_sellLeadsButton__3c0L8").click('')
+        se.check_page({"wait": (TAG, "form"),
+                       "url": "https://ibench.net/add-lead",
+                       "title": "Sell leads | iBench - real-time developers Hiring"
+                       })
+
+        se.Wait(NAME, "vetted").dropdown_select()
+        se.Cls("LeadForm_leadType__XWd1z").tag("span").click(random=True)
+        se.Cls("LeadForm_qualificationLevelType__3PXrP").tag("span").click(random=True)
+        se.Find(NAME, "fixed_price").type("fkjdfl$&^&*^$").parent(2)
+        se.tag("span").attr('class', 'validation_status_ok') # TODO = write script that'll check valid or invalid entry for the argument
+        se.Find(NAME, "lead_sales_comment").type("Test comments 1")
+        se.Find(NAME, "country").dropdown_select()
+        se.Tag("button").contains("Next").click()
+        se.Wait(CLASS, "LeadForm_aboutProject__OxQEz").text("About Project")
+        se.Find(NAME, "project_type_id").dropdown_select()
+        se.Find(NAME, "project_name").type("Project1")
+        se.Find(NAME, "project_description").type("Project descr")
+        se.Find(NAME, "budget").type(23423)
+        se.Find(CLASS, "ant-picker-input").tag("input").elem.send_keys("04/06/2023")
+        se.Find(NAME, "description_link").type("ibench.us")
+        se.Find(NAME, "additional_comment").type("additional comment")
+        se.Find(CLASS, "LeadForm_submit__1Ax9Y").click()
+        se.Wait(CLASS, "CongratsModal_modalHeader__yA0p6").text("Congrats!")
+        se.Find(CLASS, "CongratsModal_gotItButton__tJFaf").click()
+
+        se.check_page({"wait": (TAG, "h1"),
+                       "url": "Marketplace / Leads | iBench - real-time developers Hiring",
+                       "title": "Sell leads | iBench - real-time developers Hiring"})
+
+
+
 
     def main(se):
         pass
@@ -414,5 +525,8 @@ if __name__ == "__main__":
     # iBench().nt_registration_not_exist_email()
     # iBench().nt_registration_200_symbol_pswd()
     # iBench().nt_registration_with_not_accepted_terms()
-
+    # iBench().adhoc_system_not_accepts_certain_value_digits()
+    # iBench().adhoc_system_not_accepts_certain_value_symbols()
+    # iBench().adhoc_system_has_restrictions_on_field_symbol_amount()
+    iBench().adhoc_system_has_restrictions_on_field_fixed_price()
     print('FINISHED')
