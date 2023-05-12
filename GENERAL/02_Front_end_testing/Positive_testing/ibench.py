@@ -215,7 +215,7 @@ class iBench(Selen):
         se.Contains("Activate").click(action=True)
         se.sleep(5)
 
-    def pt_find_contractors(se):
+    def find_contractors(se):
         # se.WD.get(se.url + "login")
         se.login()
         se.Cls("DashboardMenu_menuLink__JkSw7", 1).click()
@@ -226,13 +226,13 @@ class iBench(Selen):
         se.Find(NAME, "location").dropdown_multiselect(random_max=2)
         se.Find(NAME, "job_title_id").dropdown_select(3).click()
         se.Contains("Maximum hourly rate").click()
-        se.Find(XPATH, "//input[contains(@name,'rate_to')]").type("1000")
+        se.Find(XPATH, "//input[contains(@name,'rate_to')]").type("1000") #boundary values 65535
         se.Find(NAME, "position_level_id").dropdown_select(3).click()
         se.Find(NAME, "experience").dropdown_select(3).click()
         se.Find(NAME, "english_level_id").dropdown_select(4).click()
         se.Cls("label").attr("class", "form_control undefined validation_ok")
         se.Find(NAME, "skills").dropdown_multiselect(random_max=5)
-        se.Find(XPATH, "//div[contains(@class,'ql-editor ql-blank')]").type("Our company is currently looking for a talented  Developer to join our team.").sleep(2)
+        se.Find(XPATH, "//div[contains(@class,'ql-editor ql-blank')]").type("Our company is currently looking for a talented  Developer to join our team. "*2).sleep(2)
         se.Contains("Activate").click(action=True)
         se.sleep(5)
 
@@ -485,8 +485,14 @@ class iBench(Selen):
         se.Wait(NAME, "vetted").dropdown_select()
         se.Cls("LeadForm_leadType__XWd1z").tag("span").click(random=True)
         se.Cls("LeadForm_qualificationLevelType__3PXrP").tag("span").click(random=True)
-        se.Find(NAME, "fixed_price").type("fkjdfl$&^&*^$").parent(2)
-        se.tag("span").attr('class', 'validation_status_ok') # TODO = write script that'll check valid or invalid entry for the argument
+        se.Find(NAME, "fixed_price").type("1").type("fkjdfl$&^&*^$").parent(2).sleep(8)
+        try:
+            se.tag("span").attr('class', 'validation_status_ok') # TODO = write script that'll check valid or invalid entry for the argument
+        except NoSuchElementException:
+            error = se.tag("span").attr('class', 'validation_status_error')
+            required = se.tag('div').attr('class', 'validation_message').print('is required')
+            print("Error", error)
+            print("Is required", required)
         se.Find(NAME, "lead_sales_comment").type("Test comments 1")
         se.Find(NAME, "country").dropdown_select()
         se.Tag("button").contains("Next").click()
@@ -507,7 +513,129 @@ class iBench(Selen):
                        "title": "Sell leads | iBench - real-time developers Hiring"})
 
 
+    # checking boundary value 0
+    def bt_1_find_contractors(se):
+        # se.WD.get(se.url + "login")
+        se.login()
+        se.Cls("DashboardMenu_menuLink__JkSw7", 1).click()
+        se.curr_url('https://ibench.net/search-slots').title("Developers | iBench - real-time developers Hiring").sleep(
+            2)
+        se.Cls("StartupSlots_free_slot__24a0Q").click()
+        se.Find(NAME, "vetted").dropdown_select(2).click()
+        se.Find(NAME, "slot_name").type("Name" + Keys.ENTER)
+        se.Find(NAME, "location").dropdown_multiselect(random_max=2)
+        se.Find(NAME, "job_title_id").dropdown_select(3).click()
+        se.Contains("Maximum hourly rate").click()
+        se.Find(XPATH, "//input[contains(@name,'rate_to')]").type("0")  # boundary values 65535
+        se.Find(NAME, "position_level_id").dropdown_select(3).click()
+        se.Find(NAME, "experience").dropdown_select(3).click()
+        se.Find(NAME, "english_level_id").dropdown_select(4).click()
+        se.Cls("label").attr("class", "form_control undefined validation_ok")
+        se.Find(NAME, "skills").dropdown_multiselect(random_max=5)
+        se.Find(XPATH, "//div[contains(@class,'ql-editor ql-blank')]").type(
+            "Our company is currently looking for a talented  Developer to join our team. " * 2).sleep(2)
+        se.Contains("Activate").click(action=True)
+        se.sleep(5)
 
+    # checking boundary value 1
+    def bt_2_find_contractors(se):
+        # se.WD.get(se.url + "login")
+        se.login()
+        se.Cls("DashboardMenu_menuLink__JkSw7", 1).click()
+        se.curr_url('https://ibench.net/search-slots').title(
+            "Developers | iBench - real-time developers Hiring").sleep(
+            2)
+        se.Cls("StartupSlots_free_slot__24a0Q").click()
+        se.Find(NAME, "vetted").dropdown_select(2).click()
+        se.Find(NAME, "slot_name").type("Name" + Keys.ENTER)
+        se.Find(NAME, "location").dropdown_multiselect(random_max=2)
+        se.Find(NAME, "job_title_id").dropdown_select(3).click()
+        se.Contains("Maximum hourly rate").click()
+        se.Find(XPATH, "//input[contains(@name,'rate_to')]").type("1")  # boundary values 65535
+        se.Find(NAME, "position_level_id").dropdown_select(3).click()
+        se.Find(NAME, "experience").dropdown_select(3).click()
+        se.Find(NAME, "english_level_id").dropdown_select(4).click()
+        se.Cls("label").attr("class", "form_control undefined validation_ok")
+        se.Find(NAME, "skills").dropdown_multiselect(random_max=5)
+        se.Find(XPATH, "//div[contains(@class,'ql-editor ql-blank')]").type(
+            "Our company is currently looking for a talented  Developer to join our team. " * 2).sleep(2)
+        se.Contains("Activate").click(action=True)
+        se.sleep(5)
+
+    # checking boundary value 5643
+    def bt_3_find_contractors(se):
+        # se.WD.get(se.url + "login")
+        se.login()
+        se.Cls("DashboardMenu_menuLink__JkSw7", 1).click()
+        se.curr_url('https://ibench.net/search-slots').title(
+            "Developers | iBench - real-time developers Hiring").sleep(
+            2)
+        se.Cls("StartupSlots_free_slot__24a0Q").click()
+        se.Find(NAME, "vetted").dropdown_select(2).click()
+        se.Find(NAME, "slot_name").type("Name" + Keys.ENTER)
+        se.Find(NAME, "location").dropdown_multiselect(random_max=2)
+        se.Find(NAME, "job_title_id").dropdown_select(3).click()
+        se.Contains("Maximum hourly rate").click()
+        se.Find(XPATH, "//input[contains(@name,'rate_to')]").type("5643")  # boundary values 65535
+        se.Find(NAME, "position_level_id").dropdown_select(3).click()
+        se.Find(NAME, "experience").dropdown_select(3).click()
+        se.Find(NAME, "english_level_id").dropdown_select(4).click()
+        se.Cls("label").attr("class", "form_control undefined validation_ok")
+        se.Find(NAME, "skills").dropdown_multiselect(random_max=5)
+        se.Find(XPATH, "//div[contains(@class,'ql-editor ql-blank')]").type(
+            "Our company is currently looking for a talented  Developer to join our team. " * 2).sleep(2)
+        se.Contains("Activate").click(action=True)
+        se.sleep(5)
+
+    # checking boundary value 65535
+    def bt_4_find_contractors(se):
+        # se.WD.get(se.url + "login")
+        se.login()
+        se.Cls("DashboardMenu_menuLink__JkSw7", 1).click()
+        se.curr_url('https://ibench.net/search-slots').title(
+            "Developers | iBench - real-time developers Hiring").sleep(
+            2)
+        se.Cls("StartupSlots_free_slot__24a0Q").click()
+        se.Find(NAME, "vetted").dropdown_select(2).click()
+        se.Find(NAME, "slot_name").type("Name" + Keys.ENTER)
+        se.Find(NAME, "location").dropdown_multiselect(random_max=2)
+        se.Find(NAME, "job_title_id").dropdown_select(3).click()
+        se.Contains("Maximum hourly rate").click()
+        se.Find(XPATH, "//input[contains(@name,'rate_to')]").type("65535")  # boundary values 65535
+        se.Find(NAME, "position_level_id").dropdown_select(3).click()
+        se.Find(NAME, "experience").dropdown_select(3).click()
+        se.Find(NAME, "english_level_id").dropdown_select(4).click()
+        se.Cls("label").attr("class", "form_control undefined validation_ok")
+        se.Find(NAME, "skills").dropdown_multiselect(random_max=5)
+        se.Find(XPATH, "//div[contains(@class,'ql-editor ql-blank')]").type(
+            "Our company is currently looking for a talented  Developer to join our team. " * 2).sleep(2)
+        se.Contains("Activate").click(action=True)
+        se.sleep(5)
+
+    # checking boundary value 65536
+    def bt_5_find_contractors(se):
+        # se.WD.get(se.url + "login")
+        se.login()
+        se.Cls("DashboardMenu_menuLink__JkSw7", 1).click()
+        se.curr_url('https://ibench.net/search-slots').title(
+            "Developers | iBench - real-time developers Hiring").sleep(
+            2)
+        se.Cls("StartupSlots_free_slot__24a0Q").click()
+        se.Find(NAME, "vetted").dropdown_select(2).click()
+        se.Find(NAME, "slot_name").type("Name" + Keys.ENTER)
+        se.Find(NAME, "location").dropdown_multiselect(random_max=2)
+        se.Find(NAME, "job_title_id").dropdown_select(3).click()
+        se.Contains("Maximum hourly rate").click()
+        se.Find(XPATH, "//input[contains(@name,'rate_to')]").type("65536")  # boundary values 65535
+        se.Find(NAME, "position_level_id").dropdown_select(3).click()
+        se.Find(NAME, "experience").dropdown_select(3).click()
+        se.Find(NAME, "english_level_id").dropdown_select(4).click()
+        se.Cls("label").attr("class", "form_control undefined validation_ok")
+        se.Find(NAME, "skills").dropdown_multiselect(random_max=5)
+        se.Find(XPATH, "//div[contains(@class,'ql-editor ql-blank')]").type(
+            "Our company is currently looking for a talented  Developer to join our team. " * 2).sleep(2)
+        se.Contains("Activate").click(action=True)
+        se.sleep(5)
 
     def main(se):
         pass
@@ -519,7 +647,7 @@ if __name__ == "__main__":
     # iBench('Seleniumwire').login()
     # iBench().registration()
     # iBench().find_employee()
-    iBench().pt_find_contractors()
+    # iBench().pt_find_contractors()
     # iBench().find_it_company()
     # iBench().login_cookies()
     # iBench().nt_registration_not_exist_email()
@@ -529,4 +657,5 @@ if __name__ == "__main__":
     # iBench().adhoc_system_not_accepts_certain_value_symbols()
     # iBench().adhoc_system_has_restrictions_on_field_symbol_amount()
     iBench().adhoc_system_has_restrictions_on_field_fixed_price()
+    # iBench().bt_5_find_contractors()
     print('FINISHED')
