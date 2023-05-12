@@ -26,6 +26,14 @@ class ChromePositiveTest(unittest.TestCase):
     def find_it_company(self):
         self.ibench.find_it_company()
 
+    def find_employee(self):
+        self.find_employee()
+
+    def sell_lead(self):
+        self.sell_lead()
+
+
+
     def nt_registration_not_exist_email(self):
         self.ibench.nt_registration_not_exist_email()
 
@@ -37,6 +45,20 @@ class ChromePositiveTest(unittest.TestCase):
 
     def nt_registration_with_not_accepted_terms(self):
         self.ibench.nt_registration_with_not_accepted_terms()
+
+    def adhoc_system_not_accepts_certain_value_digits(self):
+        self.adhoc_system_not_accepts_certain_value_digits()
+
+    def adhoc_system_not_accepts_certain_value_symbols(self):
+        self.adhoc_system_not_accepts_certain_value_symbols()
+
+    def adhoc_system_has_restrictions_on_field_symbol_amount(self):
+        self.adhoc_system_has_restrictions_on_field_symbol_amount()
+
+    def adhoc_system_has_restrictions_on_field_fixed_price(self):
+        self.adhoc_system_has_restrictions_on_field_fixed_price()
+
+
     def tearDown(self) -> None:
         self.ibench.WD.close()
         self.ibench = None
