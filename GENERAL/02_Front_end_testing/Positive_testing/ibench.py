@@ -215,6 +215,27 @@ class iBench(Selen):
         se.Contains("Activate").click(action=True)
         se.sleep(5)
 
+    def pt_find_contractors(se):
+        # se.WD.get(se.url + "login")
+        se.login()
+        se.Cls("DashboardMenu_menuLink__JkSw7", 1).click()
+        se.curr_url('https://ibench.net/search-slots').title("Developers | iBench - real-time developers Hiring" ).sleep(2)
+        se.Cls("StartupSlots_free_slot__24a0Q").click()
+        se.Find(NAME, "vetted").dropdown_select(2).click()
+        se.Find(NAME, "slot_name").type("Name" + Keys.ENTER)
+        se.Find(NAME, "location").dropdown_multiselect(random_max=2)
+        se.Find(NAME, "job_title_id").dropdown_select(3).click()
+        se.Contains("Maximum hourly rate").click()
+        se.Find(XPATH, "//input[contains(@name,'rate_to')]").type("1000")
+        se.Find(NAME, "position_level_id").dropdown_select(3).click()
+        se.Find(NAME, "experience").dropdown_select(3).click()
+        se.Find(NAME, "english_level_id").dropdown_select(4).click()
+        se.Cls("label").attr("class", "form_control undefined validation_ok")
+        se.Find(NAME, "skills").dropdown_multiselect(random_max=5)
+        se.Find(XPATH, "//div[contains(@class,'ql-editor ql-blank')]").type("Our company is currently looking for a talented  Developer to join our team.").sleep(2)
+        se.Contains("Activate").click(action=True)
+        se.sleep(5)
+
     # Check registration with any random not existing email and not requires email confirmation as client
     def nt_registration_not_exist_email(se):
         se.WD.get(se.url)
@@ -498,6 +519,7 @@ if __name__ == "__main__":
     # iBench('Seleniumwire').login()
     # iBench().registration()
     # iBench().find_employee()
+    iBench().pt_find_contractors()
     # iBench().find_it_company()
     # iBench().login_cookies()
     # iBench().nt_registration_not_exist_email()
