@@ -32,7 +32,8 @@ class ChromePositiveTest(unittest.TestCase):
     def sell_lead(self):
         self.sell_lead()
 
-
+    def pt_find_contractors(self):
+        self.pt_find_contractors()
 
     def nt_registration_not_exist_email(self):
         self.ibench.nt_registration_not_exist_email()
@@ -57,6 +58,21 @@ class ChromePositiveTest(unittest.TestCase):
 
     def adhoc_system_has_restrictions_on_field_fixed_price(self):
         self.adhoc_system_has_restrictions_on_field_fixed_price()
+
+    def bt_1_find_contractors(self):
+        self.bt_1_find_contractors()
+
+    def bt_2_find_contractors(self):
+        self.bt_2_find_contractors()
+
+    def bt_3_find_contractors(self):
+        self.bt_3_find_contractors()
+
+    def bt_4_find_contractors(self):
+        self.bt_4_find_contractors()
+
+    def bt_5_find_contractors(self):
+        self.bt_5_find_contractors()
 
 
     def tearDown(self) -> None:
