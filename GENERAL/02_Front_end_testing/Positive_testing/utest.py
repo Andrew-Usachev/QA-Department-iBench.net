@@ -1,4 +1,6 @@
 import unittest
+import HtmlTestRunner
+
 from ibench import iBench
 
 
@@ -74,12 +76,9 @@ class ChromePositiveTest(unittest.TestCase):
     def bt_5_find_contractors(self):
         self.bt_5_find_contractors()
 
-
     def tearDown(self) -> None:
         self.ibench.WD.close()
         self.ibench = None
-
-
 
 
 class FirefoxPositiveTest(ChromePositiveTest):
@@ -94,3 +93,5 @@ class OperaPositive(ChromePositiveTest):
     browser_name = "Opera"
 
 
+if __name__ == "__main__":
+    unittest.main(testRunner=HtmlTestRunner.HTMLTestRunner(output='./HtmlReport'))
