@@ -31,7 +31,8 @@ class iBench(Selen):
         se.Wait(l_h1).text('Looking for a developers, UX/UI designer, QA or DevOps...or development agency?')
         se.title('iBench - real-time developers Hiring')  # Check title
         se.curr_url("https://ibench.net/")  # Check url
-        se.Img(check=True).stat.out()  # Check all Images
+        se.Img(check=True).stat.out()
+        # Check all Images
 
     def login(se):
         lc_submit_button = ((CLASS, "Login_submit_wrapper__2-PYe"), (TAG, "button"))  # Submit button locator
@@ -53,7 +54,7 @@ class iBench(Selen):
 
         se.Wait(l_h1).text("Daily updates")
         se.curr_url("https://ibench.net/stats").title("Daily updates | iBench - real-time developers Hiring")
-        # se.Img(check=True).check_links()
+        # se.WD.close()# se.Img(check=True).check_links()
 
         # sleep(5)
 
@@ -400,7 +401,10 @@ class iBench(Selen):
     # Verify system not accepts certain inserted value (digits only) into "User profile"(Base info)
     def adhoc_system_not_accepts_certain_value_digits(se):
         se.login()
+        # se.sleep(8)
         se.Cls("Navigation_profile__hWSiK").click()
+        # se.Find(XPATH, "//header/nav[1]/ul[1]/li[3]/a[1]").click(action=True)
+        # se.Tag("ul").contains("Smart Technologies, Smart Technologies").click(action=True)
         se.check_page({"wait": (TAG, "h1"),
                        "url":"https://ibench.net/profile",
                        "title":"Startup profile | iBench - real-time developers search"})
@@ -643,6 +647,7 @@ class iBench(Selen):
 
 if __name__ == "__main__":
     # iBench('Edge').foot_nav_menu()
+    # iBench().login()
     # iBench().head_nav_menu()
     # iBench('Seleniumwire').login()
     # iBench().registration()
@@ -654,8 +659,8 @@ if __name__ == "__main__":
     # iBench().nt_registration_200_symbol_pswd()
     # iBench().nt_registration_with_not_accepted_terms()
     # iBench().adhoc_system_not_accepts_certain_value_digits()
-    # iBench().adhoc_system_not_accepts_certain_value_symbols()
+    iBench().adhoc_system_not_accepts_certain_value_symbols()
     # iBench().adhoc_system_has_restrictions_on_field_symbol_amount()
-    iBench().adhoc_system_has_restrictions_on_field_fixed_price()
+    # iBench().adhoc_system_has_restrictions_on_field_fixed_price()
     # iBench().bt_5_find_contractors()
     print('FINISHED')
