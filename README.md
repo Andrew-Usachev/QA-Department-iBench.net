@@ -1,15 +1,19 @@
 
 <div align="center"><h2>
-✨&nbsp; "# QA-Department-iBench.net"  ✨&nbsp;
+✨&nbsp; " QA-Department-iBench.net"  ✨&nbsp;
 </h2></div>
 
 
+<div align="center">
 
-##QA Team: 
 Konstantin Smolnikov
+
 Natalia Perminova
+
 Andrey Usachev
+
 Aleksandr Kulikov
+</div>
 <hr>
 <div align="center">
 It's Final project for the iBench freelance searching platform.
