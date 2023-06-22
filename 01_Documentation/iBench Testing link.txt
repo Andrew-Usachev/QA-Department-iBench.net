@@ -1,5 +1,5 @@
+1. TO open Doc file above with test plan, click on file name and in opened window click (...) right top corner.  Then click "Download". Save it to your computer and open with MS office or seamless.
+
+2.  Use this link to get an access to the GOOGLE SHEET file with all tests
+
 https://docs.google.com/spreadsheets/d/1Hv7qNGIETsza8DUWp3Qnjsew_nMQcSD5axHpt6IcP_I/edit?usp=sharing
-
-
-
-# Use this link to get an access to the GOOGLE SHEET file with tests
